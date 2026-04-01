@@ -2,7 +2,11 @@ import api from './api'
 
 export const authService = {
   async adminLogin(email, password) {
-    const response = await api.post('/auth/admin/login', { email, password })
+    const response = await api.post(
+      '/auth/admin/login',
+      { email, password },
+      { skipAuthRedirect: true }
+    )
     return response.data
   },
 
@@ -12,7 +16,11 @@ export const authService = {
   },
 
   async employeeLogin(documento, password) {
-    const response = await api.post('/auth/employee-login', { documento, password })
+    const response = await api.post(
+      '/auth/employee-login',
+      { documento, password },
+      { skipAuthRedirect: true }
+    )
     return response.data
   },
 

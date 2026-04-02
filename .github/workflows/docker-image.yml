@@ -1,27 +1,43 @@
-name: Build Application
+name: Build and Push Images
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-
-  build:
+  docker:
     runs-on: ubuntu-latest
-
     permissions:
       contents: read
       packages: write
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/checkout@v4
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Login GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build and push API
+        uses: docker/build-push-action@v6
+        with:
+          context: ./TalentoPlus
+          file: ./TalentoPlus/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/reijbak/talentoplus-api:latest
+            ghcr.io/reijbak/talentoplus-api:${{ github.sha }}
 
-      - name: Build image
-        run: docker build -t ghcr.io/reijbak/talentoplus:latest .
-
-      - name: Push image
-        run: docker push ghcr.io/reijbak/talentoplus:latest
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./Frontend
+          file: ./Frontend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/reijbak/talentoplus-frontend:latest
+            ghcr.io/reijbak/talentoplus-frontend:${{ github.sha }}

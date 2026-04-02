@@ -41,3 +41,6 @@ jobs:
           tags: |
             ghcr.io/reijbak/talentoplus-frontend:latest
             ghcr.io/reijbak/talentoplus-frontend:${{ github.sha }}
+          build-args: |
+            VITE_API_URL=${{ secrets.VITE_API_URL }}
+      
